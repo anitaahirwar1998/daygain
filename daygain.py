@@ -19,7 +19,8 @@ def stocknum(name, days=1):
 
     df = data[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
     df['Symbol'] = name
-    return df
+    df_copy=df.reset_index()
+    return df_copy
 creds = ServiceAccountCredentials.from_json_keyfile_name('./gssep-399015-22a26cd898e7.json')
 client = gspread.authorize(creds)
 gsselect = client.open('News Database Sep 2023')
@@ -31,7 +32,7 @@ for i in list(stk_raw_df["Tag"]):
   df=stocknum(i)
   final_df=pd.concat([df,final_df],ignore_index=True)
 final_df["RT"]=round((final_df["High"]-final_df["Open"])*100/final_df["Open"],2)
-final_df_sort=final_df[['Symbol','Open', 'High', 'Low', 'Close', 'Volume',"RT"]].copy()
+final_df_sort=final_df[['Symbol','Open', 'High', 'Low', 'Close', 'Volume',"RT","Date"]].copy()
 out_sheet=gsselect.worksheet("DayAnalysis")
 out_sheet.clear()
 set_with_dataframe(out_sheet, final_df_sort)
